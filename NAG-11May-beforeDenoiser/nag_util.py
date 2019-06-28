@@ -534,3 +534,9 @@ def validation(gen_output, target):
     adversary_preds = torch.argmax(arch(perturbed_images), 1)
     
     return (benign_preds != adversary_preds).float().mean()
+
+
+class ImmediateCSVLogger(CSVLogger):
+  def on_epoch_end(self, epoch: int, smooth_loss: Tensor, last_metrics: MetricsList, **kwargs: Any) -> bool:
+      super().on_epoch_end(epoch, smooth_loss, last_metrics)
+      self.file.flush()
