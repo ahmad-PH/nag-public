@@ -490,3 +490,35 @@ def random_seed(seed_value, use_cuda):
         torch.cuda.manual_seed_all(seed_value) # gpu vars
         torch.backends.cudnn.deterministic = True  #needed
         torch.backends.cudnn.benchmark = False
+
+
+
+class DiversityWeightsScheduler(LearnerCallback):
+  def __init__(self, learn: Learner):
+    super().__init__(learn)
+    self.weight = None
+  
+  def on_epoch_end(self, **kwargs):
+    last_metrics = kwargs['last_metrics']
+    if len(last_metrics) == 1: #it's the lr_find() calling
+      return
+    
+    validation = last_metrics[1].item()
+    
+    div_loss = last_metrics[3].item()
+#     div_loss = (last_metrics[3].item() + last_metrics[4].item()) /2.
+    
+    if div_loss < 0.6:
+      if self.weight != 0.5:
+        print("end of epoch {} switching weights to 0.5".format(kwargs['epoch']))
+      self.weight = 0.5
+    if div_loss < 0.4:
+      if self.weight != 0.1:
+        print("end of epoch {} switching weights to 0.1".format(kwargs['epoch']))
+      self.weight = 0.1
+    else:
+      if self.weight != 1.:
+        print("end of epoch {} switching weights to 1".format(kwargs['epoch']))
+      self.weight = 1.
+      
+    self.learn.loss_func.weights = [self.weight] * len(layers)
