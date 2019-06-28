@@ -458,3 +458,14 @@ def zip_test_dataset(root_folder):
       shutil.rmtree(test_folder)
 #       shutil.copy("/content/{}.zip".format(i), "/content/gdrive/My Drive/DL/full_test_folder")
       print("done with the {}th fragment".format(i))
+
+
+def derangement(n):
+    result = torch.randperm(n)
+
+    for i in range(1, len(result)):
+        if i == result[i]:
+            ip = 1 if i == 0 else 0
+            result[i], result[ip] = result[ip], result[i]
+
+    return result
