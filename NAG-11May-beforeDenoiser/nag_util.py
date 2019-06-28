@@ -469,3 +469,24 @@ def derangement(n):
             result[i], result[ip] = result[ip], result[i]
 
     return result
+
+
+def load_starting_point(learn, name, z_dim):
+  import os
+  identity_token = name + '-zdim' + str(z_dim)
+  address = '/content/gdrive/My Drive/DL/model_starting_points/' + identity_token
+  starting_point_exists = os.path.isfile(address + '.pth')
+  if not starting_point_exists:
+    print("\n\nno starting point found for model:" + identity_token + ". creating one from the current learner.\n\n")
+    learn.save(address)
+  learn.load(address)
+  
+def random_seed(seed_value, use_cuda):
+    random.seed(seed_value) # python
+    np.random.seed(seed_value) # numpy
+    torch.manual_seed(seed_value) # pytorch
+    if use_cuda: 
+        torch.cuda.manual_seed(seed_value)
+        torch.cuda.manual_seed_all(seed_value) # gpu vars
+        torch.backends.cudnn.deterministic = True  #needed
+        torch.backends.cudnn.benchmark = False
