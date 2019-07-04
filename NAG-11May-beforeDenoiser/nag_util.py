@@ -557,3 +557,7 @@ def scale_to_range(tensor, _range):
   new_range_length = _range[1] - _range[0]
   old_range_length = tensor.max() - tensor.min()
   return ((tensor - tensor.min()) * new_range_length / old_range_length) + _range[0]
+
+
+def noise_to_image(noise):
+  return Image(scale_to_range(noise.detach(), (0.,1.)))
