@@ -532,3 +532,22 @@ class ImmediateCSVLogger(CSVLogger):
 
 def print_range(x):
   print(x.min().item(), x.max().item())
+
+
+def denormalize(tensor, stats = imagenet_stats):
+  assert(tensor.dim() == 3 or tensor.dim() == 4)
+  mean = torch.tensor(stats[0]).cuda()
+  stddev = torch.tensor(stats[1]).cuda()
+  if tensor.dim() == 3:
+    return (tensor * stddev[:,None, None]) + mean[:, None, None]    
+  elif tensor.dim() == 4:
+    return (tensor * stddev[None, :, None, None]) + mean[None, :, None, None]   
+  
+def normalize(tensor, stats = imagenet_stats):
+  assert(tensor.dim() == 3 or tensor.dim() == 4)
+  mean = torch.tensor(stats[0]).cuda()
+  stddev = torch.tensor(stats[1]).cuda()
+  if tensor.dim() == 3:
+    return (tensor - mean[:, None, None]) / stddev[:,None, None]    
+  elif tensor.dim() == 4:
+    return (tensor - mean[None, :, None, None]) / stddev[None, :, None, None]
