@@ -540,3 +540,7 @@ class ImmediateCSVLogger(CSVLogger):
   def on_epoch_end(self, epoch: int, smooth_loss: Tensor, last_metrics: MetricsList, **kwargs: Any) -> bool:
       super().on_epoch_end(epoch, smooth_loss, last_metrics)
       self.file.flush() 
+
+
+def print_range(x):
+  print(x.min().item(), x.max().item())
