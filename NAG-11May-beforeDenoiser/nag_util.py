@@ -561,3 +561,15 @@ def scale_to_range(tensor, _range):
 
 def noise_to_image(noise):
   return Image(scale_to_range(noise.detach(), (0.,1.)))
+
+
+def interpolate(x1, x2, step):
+  import math
+  with torch.no_grad():
+    delta = (x2 - x1) * step
+    result = [x1]
+    n = math.floor(1 / step) - 1
+    for i in range(n):
+      result.append(result[-1] + delta)
+    result.append(x2)
+    return result
