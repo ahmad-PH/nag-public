@@ -551,3 +551,9 @@ def normalize(tensor, stats = imagenet_stats):
     return (tensor - mean[:, None, None]) / stddev[:,None, None]    
   elif tensor.dim() == 4:
     return (tensor - mean[None, :, None, None]) / stddev[None, :, None, None]
+
+
+def scale_to_range(tensor, _range):
+  new_range_length = _range[1] - _range[0]
+  old_range_length = tensor.max() - tensor.min()
+  return ((tensor - tensor.min()) * new_range_length / old_range_length) + _range[0]
