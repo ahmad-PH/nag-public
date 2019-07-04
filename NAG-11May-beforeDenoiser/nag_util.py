@@ -524,18 +524,6 @@ class DiversityWeightsScheduler(LearnerCallback):
     self.learn.loss_func.weights = [self.weight] * len(layers)
 
 
-def validation(gen_output, target):
-    perturbations, clean_images = gen_output
-    perturbed_images = clean_images + perturbations
-#     print("perturbed image size: %s, dis_input size: %s and perturbation size: %s"%(
-#         prturbed_img.shape, dis_input.shape, perturbation.shape
-#     ))
-    benign_preds = torch.argmax(arch(clean_images), 1)
-    adversary_preds = torch.argmax(arch(perturbed_images), 1)
-    
-    return (benign_preds != adversary_preds).float().mean()
-
-
 class ImmediateCSVLogger(CSVLogger):
   def on_epoch_end(self, epoch: int, smooth_loss: Tensor, last_metrics: MetricsList, **kwargs: Any) -> bool:
       super().on_epoch_end(epoch, smooth_loss, last_metrics)
