@@ -573,7 +573,3 @@ def interpolate(x1, x2, step):
       result.append(result[-1] + delta)
     result.append(x2)
     return result
-
-
-def testshell():
-	!ls
