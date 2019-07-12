@@ -472,6 +472,8 @@ def derangement(n):
 
 
 def load_starting_point(learn, name, z_dim):
+  if detect_env() != "colab":
+    raise NotImplementedError("load_starting_point not implemented for non-colab environments yet.")
   import os
   identity_token = name + '-zdim' + str(z_dim)
   address = '/content/gdrive/My Drive/DL/model_starting_points/' + identity_token
@@ -480,7 +482,7 @@ def load_starting_point(learn, name, z_dim):
     print("\n\nno starting point found for model:" + identity_token + ". creating one from the current learner.\n\n")
     learn.save(address)
   learn.load(address)
-  
+
 def random_seed(seed_value, use_cuda):
     random.seed(seed_value) # python
     np.random.seed(seed_value) # numpy
