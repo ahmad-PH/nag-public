@@ -583,7 +583,5 @@ def class_index_to_label(index):
     for i in range(index + 1):
         line = file.readline()
     start = line.find(':') + 2
-    return line.strip('\n')[start:-2]
-
-
-print(class_index_to_label(2))
+    label = line.strip('\n')[start:-2]
+    return (index, label)
