@@ -578,12 +578,12 @@ def interpolate(x1, x2, step):
 
 
 def class_index_to_label(index):
-    file = open('./imagenet_clsidx_to_labels.txt')
+    file = open(os.path.dirname(os.path.abspath(__file__)) + '/imagenet_clsidx_to_labels.txt')
     line = None
     for i in range(index + 1):
         line = file.readline()
     start = line.find(':') + 2
-    return line[start:-2]
+    return line.strip('\n')[start:-2]
 
 
-print(class_index_to_label(999))
+print(class_index_to_label(2))
