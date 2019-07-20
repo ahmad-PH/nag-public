@@ -589,3 +589,10 @@ def detect_env():
       return "colab"
     else:
       return "IBM"
+
+    
+def create_env():
+  if detect_env() == "IBM":
+    return IBMEnv()
+  elif detect_env() == "colab":
+    return ColabEnv()
