@@ -582,17 +582,9 @@ def class_index_to_label(index):
     label = line.strip('\n')[start:-2]
     return (index, label)
 
-
-def detect_env():
-    import os
-    if 'content' in os.listdir('/'):
-      return "colab"
-    else:
-      return "IBM"
-
-    
-def create_env():
-  if detect_env() == "IBM":
-    return IBMEnv()
-  elif detect_env() == "colab":
-    return ColabEnv()
+def entropy(x):
+  if not isinstance(x, torch.Tensor):
+    x = torch.tensor(x)
+  x = x / torch.sum(x)
+  epsilon = 1e-10
+  return - torch.sum(x * (torch.log(x + epsilon) / torch.log(torch.tensor(2.))))
