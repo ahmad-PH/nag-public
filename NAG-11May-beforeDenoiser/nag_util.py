@@ -588,3 +588,12 @@ def entropy(x):
   x = x / torch.sum(x)
   epsilon = 1e-10
   return - torch.sum(x * (torch.log(x + epsilon) / torch.log(torch.tensor(2.))))
+
+
+def print_big_vector(x, thresh = 0.01):
+  torch.set_printoptions(precision=2, sci_mode=False, threshold=5000)  
+  print("[", end="")
+  for i, x_i in enumerate(x.data):
+    if abs(x_i) > thresh:
+      print("{}: {:.2f}".format(i, x_i.item()), end=(", " if (i < x.shape[0]-1) else ""))
+  print("]")
