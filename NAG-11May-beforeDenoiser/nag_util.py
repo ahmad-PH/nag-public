@@ -600,3 +600,15 @@ def print_big_vector(x, thresh = 0.01):
 
 def tensorify(x):
   return x if isinstance(x, torch.Tensor) else torch.tensor(x)
+
+
+class SoftmaxWrapper(nn.Module):
+  def __init__(self, m):
+    super().__init__()
+    self.m = m
+    self.softmax = nn.Softmax(dim=-1)
+    
+  def forward(self, inp):
+    out = self.m(inp)
+    return self.softmax(out)
+ 
