@@ -597,3 +597,6 @@ def print_big_vector(x, thresh = 0.01):
     if abs(x_i) > thresh:
       print("{}: {:.2f}".format(i, x_i.item()), end=(", " if (i < x.shape[0]-1) else ""))
   print("]")
+
+def tensorify(x):
+  return x if isinstance(x, torch.Tensor) else torch.tensor(x)
