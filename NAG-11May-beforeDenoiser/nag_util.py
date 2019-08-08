@@ -8,7 +8,6 @@ import torchvision
 import os
 import subprocess
 
-########################### utility section ###########################
 def get_shell_output(command):
     return subprocess.check_output(command, shell = True).decode("utf-8")
 
@@ -17,8 +16,6 @@ def run_shell_cmd(command):
     ignore_out, ignore_err = process.communicate()
     return process.wait()
 
-
-########################### en of utility section ###########################
 
 class deconv_layer(nn.Module):
 #   def __init__(self, in_ch, out_ch, k_size = (5,5), s = (2,2), pad = (2,2), b = True):
@@ -58,12 +55,6 @@ def fool_loss(input, target):
 #     y_b, y_a, _, _, _ = input
     true_class = torch.argmax(target, dim=1).view(-1,1).long()
     return -1 * torch.log(torch.mean(1 - input.gather(1, true_class)))
-
-#unused
-# def loss(input, target):
-#     div_loss = diversity_loss(input, target)
-#     f_loss = fool_loss(input, target)
-#     return div_loss + f_loss
 
   
 global_perturbations = None
@@ -590,13 +581,18 @@ def entropy(x):
   return - torch.sum(x * (torch.log(x + epsilon) / torch.log(torch.tensor(2.))))
 
 
-def print_big_vector(x, thresh = 0.01):
+def big_vector_to_str(x, thresh = 0.01):
   torch.set_printoptions(precision=2, sci_mode=False, threshold=5000)  
-  print("[", end="")
+  result = "["
   for i, x_i in enumerate(x.data):
     if abs(x_i) > thresh:
-      print("{}: {:.2f}".format(i, x_i.item()), end=(", " if (i < x.shape[0]-1) else ""))
-  print("]")
+      result += "{}: {:.2f}".format(i, x_i.item()) 
+      result += ", " if (i < x.shape[0]-1) else ""
+  result += "]"
+  return result
+
+def print_big_vector(x, thresh = 0.01):
+  print(big_vector_to_str(x, thresh))
 
 def tensorify(x):
   return x if isinstance(x, torch.Tensor) else torch.tensor(x)
