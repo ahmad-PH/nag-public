@@ -530,13 +530,14 @@ class ColabEnv(Env):
       return self.root_folder + '/gdrive/My Drive/DL/models/'
         
     def setup(self):
+        raise NotImplementedError('setup funtion has not been tested with the new run_shell_command yet.')
         # remove this once tochvision 0.3 is present by default in colab
         global torchvision_upgraded
         try:
             torchvision_upgraded
         except NameError:
-          !pip uninstall -y torchvision
-          !pip install https://download.pytorch.org/whl/cu100/torchvision-0.3.0-cp36-cp36m-linux_x86_64.whl
+          run_shell_command('pip uninstall -y torchvision')
+          run_shell_command('pip install https://download.pytorch.org/whl/cu100/torchvision-0.3.0-cp36-cp36m-linux_x86_64.whl')
           torchvision_upgraded = True
         else:
           print("torchvision already upgraded")
