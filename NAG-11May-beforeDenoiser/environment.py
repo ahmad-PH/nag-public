@@ -43,19 +43,22 @@ class IBMEnv(Env):
     
     def get_learner_models_dir(self):
       if self.learner_models_dir:
-        return self.learner_models_dir
+        result =  self.learner_models_dir
       else:
         n_reserved_models_dirs = self.read_then_increment_n_reserved_models_dirs(+1)
         self.learner_models_dir = 'models_' + str(n_reserved_models_dirs)
-        return self.learner_models_dir
-        
-    def release_learner_models_dir(self):
-      if self.learner_models_dir is None:
-        raise Exception('attempt to release learner_models_dir when none has been acquired')
-      n_reserved = self.read_then_increment_n_reserved_models_dirs(-1)
-      if n_reserved <= 0:
-        raise Exception('tried to release learner models dir but it was < 0.')
-      self.learner_models_dir = None
+        result = self.learner_models_dir
+      print('models_directory returned is: ', result)
+      return result
+    
+    # release is meaningless and buggy! remove it after some time        
+    # def release_learner_models_dir(self):
+    #   if self.learner_models_dir is None:
+    #     raise Exception('attempt to release learner_models_dir when none has been acquired')
+    #   n_reserved = self.read_then_increment_n_reserved_models_dirs(-1)
+    #   if n_reserved <= 0:
+    #     raise Exception('tried to release learner models dir but it was < 0.')
+    #   self.learner_models_dir = None
     
     def read_then_increment_n_reserved_models_dirs(self, increment):
       self.acquire_env_lock()
@@ -112,9 +115,6 @@ class ColabEnv(Env):
 
     def get_learner_models_dir(self):
       return 'models'
-
-    def release_learner_models_dir(self):
-      pass # does nothing
         
     def setup(self):
         raise NotImplementedError('setup funtion has not been tested with the new run_shell_command yet.')
