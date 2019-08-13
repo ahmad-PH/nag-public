@@ -4,6 +4,10 @@ from pathlib import Path
 import fcntl
 import json
 from fastai.vision import *
+from fastai.imports import *
+from fastai.callbacks import *
+from fastai.utils.mem import *
+import torch
 
 
 def detect_env():
@@ -89,7 +93,7 @@ class IBMEnv(Env):
       os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID" 
       os.environ['CUDA_VISIBLE_DEVICES']=str(cuda_index)
       defaults.device = torch.device('cuda:' + str(cuda_index))
-      torch.cuda.set_device('cuda:' + str(cuda_index))
+      torch.cuda.set_device(cuda_index)
       
     def load_dataset(self, compressed_name, unpacked_name):
       pass
