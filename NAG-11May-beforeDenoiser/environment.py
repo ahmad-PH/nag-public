@@ -1,3 +1,6 @@
+import os
+import subprocess
+
 def detect_env():
     return 'colab' if 'content' in os.listdir('/') else 'IBM'
   
