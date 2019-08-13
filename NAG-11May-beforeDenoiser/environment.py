@@ -83,10 +83,9 @@ class IBMEnv(Env):
         fcntl.lockf(self.lockfile, fcntl.LOCK_UN)
       
     
-    def setup(self):
+    def setup(self, cuda_index):
       import os; import torch;
       os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID" 
-      cuda_index = 0
       os.environ['CUDA_VISIBLE_DEVICES']=str(cuda_index)
       
     def load_dataset(self, compressed_name, unpacked_name):
@@ -116,7 +115,7 @@ class ColabEnv(Env):
     def get_learner_models_dir(self):
       return 'models'
         
-    def setup(self):
+    def setup(self, **kwargs):
         raise NotImplementedError('setup funtion has not been tested with the new run_shell_command yet.')
         # remove this once tochvision 0.3 is present by default in colab
         global torchvision_upgraded
