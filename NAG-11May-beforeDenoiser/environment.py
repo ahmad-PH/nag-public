@@ -3,6 +3,7 @@ import subprocess
 from pathlib import Path
 import fcntl
 import json
+from fastai.vision import *
 
 
 def detect_env():
