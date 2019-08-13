@@ -464,18 +464,6 @@ def create_env():
     return ColabEnv()
 
 class Env:
-  def get_nag_util_files(self):
-      import os
-      
-      print("\ngetting git files ...")
-      if os.path.isdir(self.python_files_path):
-        os.chdir(self.python_files_path)
-        run_shell_command('git pull')
-        os.chdir(self.root_folder)
-      else:
-        run_shell_command('git clone https://github.com/ahmad-PH/nag-public.git')
-      print("done.")
-      
   def get_csv_path(self):
     return self.get_csv_dir() + self.save_filename
   
@@ -499,8 +487,6 @@ class IBMEnv(Env):
       return self.root_folder + "/models/"
     
     def setup(self):
-      self.get_nag_util_files()
-      
       import os; import torch;
       os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID" 
       cuda_index = 0
@@ -544,8 +530,6 @@ class ColabEnv(Env):
           
         from google.colab import drive
         drive.mount('/content/gdrive')
-        
-        self.get_nag_util_files()
         
     def load_dataset(self, compressed_name, unpacked_name):
       raise NotImplementedError('load_dataset for colab has direct shell commands, which have not been tested yet.')
