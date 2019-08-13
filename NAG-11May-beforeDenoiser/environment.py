@@ -46,7 +46,7 @@ class IBMEnv(Env):
         result =  self.learner_models_dir
       else:
         n_reserved_models_dirs = self.read_then_increment_n_reserved_models_dirs(+1)
-        self.learner_models_dir = 'models_' + str(n_reserved_models_dirs)
+        self.learner_models_dir = 'models/' + str(n_reserved_models_dirs)
         result = self.learner_models_dir
       print('models_directory returned is: ', result)
       return result
