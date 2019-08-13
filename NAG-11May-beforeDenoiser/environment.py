@@ -113,7 +113,7 @@ class ColabEnv(Env):
     def get_learner_models_dir(self):
       return 'models'
 
-     def get_learner_models_dir(self):
+    def release_learner_models_dir(self):
       pass # does nothing
         
     def setup(self):
