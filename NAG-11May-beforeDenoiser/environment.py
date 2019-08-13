@@ -1,5 +1,6 @@
 import os
 import subprocess
+from pathlib import Path
 
 def detect_env():
     return 'colab' if 'content' in os.listdir('/') else 'IBM'
