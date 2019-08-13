@@ -268,8 +268,8 @@ def rename_imagenet_folders(root_folder):
             name_map[int(cls_id)] = name_id
 
     for idx, name in name_map.items():
-      if Path(f'{root_folder}/{idx}').exists():
-        os.rename(f'{root_folder}/{idx}', f'{root_folder}/{name}')
+      if Path('{}/{}'.format(root_folder, idx)).exists():
+        os.rename('{}/{}'.format(root_folder, idx), '{}/{}'.format(root_folder, name))
 
 
 def zip_test_dataset(root_folder):
@@ -448,11 +448,6 @@ class SoftmaxWrapper(nn.Module):
     out = self.m(inp)
     return self.softmax(out)
  
-
- import subprocess
-
-
-
 
 # Environment parts
 def detect_env():
