@@ -1,6 +1,9 @@
 import os
 import subprocess
 from pathlib import Path
+import fcntl
+import json
+
 
 def detect_env():
     return 'colab' if 'content' in os.listdir('/') else 'IBM'
@@ -21,13 +24,13 @@ class Env:
   
   def get_models_path(self):
     return self.get_models_dir() + self.save_filename
-  
 
 class IBMEnv(Env):
     def __init__(self):
       self.root_folder = "/root/Derakhshani/adversarial"
       self.temp_csv_path = self.root_folder + "/temp"
       self.python_files_path = self.root_folder + "/nag-public"
+      self.learner_models_dir = None
       
       import sys
       sys.path.append('./nag/nag_util')
@@ -37,6 +40,45 @@ class IBMEnv(Env):
     
     def get_models_dir(self):
       return self.root_folder + "/models/"
+    
+    def get_learner_models_dir(self):
+      if self.learner_models_dir:
+        return self.learner_models_dir
+      else:
+        n_reserved_models_dirs = self.read_then_increment_n_reserved_models_dirs(+1)
+        self.learner_models_dir = 'models_' + str(n_reserved_models_dirs)
+        return self.learner_models_dir
+        
+    def release_learner_models_dir(self):
+      if self.learner_models_dir is None:
+        raise Exception('attempt to release learner_models_dir when none has been acquired')
+      n_reserved = self.read_then_increment_n_reserved_models_dirs(-1)
+      if n_reserved <= 0:
+        raise Exception('tried to release learner models dir but it was < 0.')
+      self.learner_models_dir = None
+    
+    def read_then_increment_n_reserved_models_dirs(self, increment):
+      self.acquire_env_lock()
+      with open(self.root_folder + '/environment_data.txt', 'r+') as env_file:
+        env_data = json.loads(env_file.read())
+
+      result = env_data['n_reserved_models_dirs']
+      env_data['n_reserved_models_dirs'] += increment
+
+      with open(self.root_folder + '/environment_data.txt', 'w+') as env_file:
+        env_file.write(json.dumps(env_data))
+      self.release_env_lock()
+      
+      return result
+      
+    def acquire_env_lock(self):
+      self.lockfile = open(self.root_folder + '/environment.lock', 'r+')
+      fcntl.lockf(self.lockfile, fcntl.LOCK_EX)
+    
+    def release_env_lock(self):
+      if self.lockfile:
+        fcntl.lockf(self.lockfile, fcntl.LOCK_UN)
+      
     
     def setup(self):
       import os; import torch;
@@ -52,6 +94,7 @@ class IBMEnv(Env):
     
     def set_data_path(self, path):
       self.data_path = Path(self.root_folder + '/datasets/' + path)
+            
     
         
 class ColabEnv(Env):
@@ -66,6 +109,12 @@ class ColabEnv(Env):
     
     def get_models_dir(self):
       return self.root_folder + '/gdrive/My Drive/DL/models/'
+
+    def get_learner_models_dir(self):
+      return 'models'
+
+     def get_learner_models_dir(self):
+      pass # does nothing
         
     def setup(self):
         raise NotImplementedError('setup funtion has not been tested with the new run_shell_command yet.')
@@ -117,4 +166,3 @@ class ColabEnv(Env):
         
     def set_data_path(self, path):
       self.data_path = Path('./' + path)
-        
