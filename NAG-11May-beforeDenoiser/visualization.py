@@ -1,6 +1,9 @@
 from functools import partial
 from torch.nn import init
 from typing import Iterable
+import torch
+from torch import nn
+
 torch.Tensor.ndim = property(lambda x: len(x.shape))
 
 def listify(o):
