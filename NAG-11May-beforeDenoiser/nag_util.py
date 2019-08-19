@@ -448,3 +448,22 @@ class SoftmaxWrapper(nn.Module):
     out = self.m(inp)
     return self.softmax(out)
  
+
+def compute_mean_prediction_histogram_slow(learn, perturbations):
+  pred_histogram = torch.tensor([0] * 1000).detach_()
+  for j, perturbation in enumerate(perturbations):
+    pred_histogram_j = torch.tensor(compute_prediction_histogram(learn, perturbation, True)).detach_()
+    pred_histogram += pred_histogram_j
+    print("finished creating histogram for the {}th perturbation".format(j))
+  
+  pred_histogram = pred_histogram.float() / len(perturbations)
+  return pred_histogram.tolist()
+
+
+def diversity_slow(learn, n_perturbations, percentage = 95, p = None):
+  pred_histogram = compute_mean_prediction_histogram(
+      learn, generate_perturbations(learn, n_perturbations)
+  )
+  print("finished creating the prediction histogram")
+
+  return classes_needed_to_reach(95, pred_histogram)
