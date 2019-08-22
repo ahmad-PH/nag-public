@@ -288,14 +288,14 @@ def zip_test_dataset(root_folder):
 
 
 def derangement(n):
-    result = torch.randperm(n)
+    result = torch.randperm(n).tolist()
 
-    for i in range(1, len(result)):
+    for i in range(len(result)):
         if i == result[i]:
-            ip = 1 if i == 0 else 0
+            ip = (1 if i == 0 else 0)
             result[i], result[ip] = result[ip], result[i]
 
-    return result
+    return torch.tensor(result)
 
 
 def load_starting_point(learn, name, z_dim):
