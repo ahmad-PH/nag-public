@@ -467,3 +467,32 @@ def diversity_slow(learn, n_perturbations, percentage = 95, p = None):
   print("finished creating the prediction histogram")
 
   return classes_needed_to_reach(95, pred_histogram)
+
+class DiversityMetricOld(Callback):
+  def __init__(self, n_perturbations, percentage):
+    super().__init__()
+    self.name = "div_metric_old"
+    self.n_perturbations = n_perturbations
+    self.percentage = percentage
+    self.learn = None
+  
+  def set_learner(self, learn):
+    self.learn = learn
+    
+  def on_epoch_begin(self, **kwargs):
+    global learn
+    self.perturbations = generate_perturbations(self.learn, self.n_perturbations)
+    self.pred_hist = torch.tensor([0] * 1000).detach_()
+    
+  def on_batch_end(self, last_output, last_target, **kwargs):
+    images = last_output[3]
+    for j, perturbation in enumerate(self.perturbations):
+      perturbed_batch = images + perturbation[None]
+      preds = arch(perturbed_batch).argmax(1)
+      for pred in preds:
+        self.pred_hist[pred] += 1
+  
+  def on_epoch_end(self, last_metrics, **kwargs):
+    self.pred_hist = (self.pred_hist.float() / len(self.perturbations)).tolist()
+    div_metric = classes_needed_to_reach(self.percentage, self.pred_hist)[0]
+    return add_metrics(last_metrics, div_metric)
