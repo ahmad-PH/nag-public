@@ -2,11 +2,10 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-torch.Tensor.ndims = property(lambda x: len(x.shape))
-
 __all__ = [
     'VBN',
 ]
+torch.Tensor.ndims = property(lambda x: len(x.shape))
 
 def batch_normalization(x, mean, variance, offset, scale, variance_epsilon, name=None):
   inv = 1 / ((variance + variance_epsilon) ** 0.5)
@@ -149,9 +148,9 @@ class VBN(nn.Module):
 
     # Make the variables, if necessary.
     if self._center:
-      self._beta = nn.Parameter(torch.zeros(params_shape), self._trainable)
+      self._beta = nn.Parameter(torch.zeros(params_shape), self._trainable).cuda()
     if self._scale:
-      self._gamma = nn.Parameter(torch.ones(params_shape), self._trainable)
+      self._gamma = nn.Parameter(torch.ones(params_shape), self._trainable).cuda()
 
   def _virtual_statistics(self, inputs, reduction_axes):
     """Compute the statistics needed for virtual batch normalization."""
@@ -207,10 +206,6 @@ class VBN(nn.Module):
     b_shape = self._broadcast_shape[:]  # deep copy
     b_shape[self._batch_axis] = inputs.shape[self._batch_axis]
     
-    # print('inputs: {}, b_shape: {}, bc_shape: {}, vb_mean: {}, broadcast(vb_mean): {}, beta: {}, broadcast(beta): {}'.format(
-    #   inputs.shape, b_shape, self._broadcast_shape, vb_mean.shape, self._broadcast(vb_mean, self._broadcast_shape).shape, 
-    #   self._beta.shape, self._broadcast(self._beta, self._broadcast_shape).shape))
-
     return batch_normalization(
         inputs, 
         self._broadcast(vb_mean, b_shape),
