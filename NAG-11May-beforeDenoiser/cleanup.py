@@ -25,10 +25,12 @@ def cleanup_models_folder(models_folder):
                     cleanup_model_folder(folder + '/' + file, model_name)
             else:
                 cleanup_model_folder(folder, folder)
-
-
+                
 def cleanup_model_folder(folder, model_name):
     if os.path.isfile(folder + '/cleanignore'): return
+
+    def create_clean_ignore_file():
+        clean_ignore = open('cleanignore', 'x'); clean_ignore.close()
 
     with TempChangeDir(folder):
         print('cleaning up folder: ', folder)
@@ -42,6 +44,7 @@ def cleanup_model_folder(folder, model_name):
 
         if len(indexed_matching_files) == 0: 
             print('no file found with the pattern \"model_name_index.pth\", ignoring the directory.')
+            create_clean_ignore_file()
             return
 
         indexed_matching_files.sort(key = lambda x: x[0], reverse = True)
@@ -56,7 +59,7 @@ def cleanup_model_folder(folder, model_name):
 
         if all([file in os.listdir('.') for file in keep_files]) and len(keep_files) == len(os.listdir('.')):
             print('folder only contains last and best models, exiting.')
-            clean_ignore = open('cleanignore', 'x'); clean_ignore.close()
+            create_clean_ignore_file()
             return
 
         with open('keep.txt', 'w') as out_file:
@@ -89,5 +92,5 @@ def cleanup_model_folder(folder, model_name):
             if file not in keep_files:
                 os.remove(file)
 
-        clean_ignore = open('cleanignore', 'x'); clean_ignore.close()
+        create_clean_ignore_file()
         print('done.')
