@@ -41,7 +41,8 @@ def cleanup_model_folder(folder, model_name):
                 indexed_matching_files.append((index, file))
 
         if len(indexed_matching_files) == 0: 
-            raise FileNotFoundError('no file found with the pattern \"model_name_index.pth\"')
+            print('no file found with the pattern \"model_name_index.pth\", ignoring the directory.')
+            return
 
         indexed_matching_files.sort(key = lambda x: x[0], reverse = True)
         last_file = indexed_matching_files[0][1]
