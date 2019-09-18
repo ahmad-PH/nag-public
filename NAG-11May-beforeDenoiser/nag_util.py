@@ -8,6 +8,14 @@ import torchvision
 import os
 import subprocess
 
+def to_ordinal(i):
+  ones = i % 10
+  if ones == 1: suffix = 'st'
+  elif ones == 2: suffix = 'nd'
+  elif ones == 3: suffix = 'rd'
+  else: suffix = 'th'
+  return str(i) + suffix
+
 def get_shell_output(command):
     return subprocess.check_output(command, shell = True).decode("utf-8")
 
