@@ -8,23 +8,6 @@ import torchvision
 import os
 import subprocess
 
-def to_ordinal(i):
-  ones = i % 10
-  if ones == 1: suffix = 'st'
-  elif ones == 2: suffix = 'nd'
-  elif ones == 3: suffix = 'rd'
-  else: suffix = 'th'
-  return str(i) + suffix
-
-def get_shell_output(command):
-    return subprocess.check_output(command, shell = True).decode("utf-8")
-
-def run_shell_cmd(command):
-    process = subprocess.Popen(command, shell = True, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-    ignore_out, ignore_err = process.communicate()
-    return process.wait()
-
-
 class deconv_layer(nn.Module):
     def __init__(self, in_ch, out_ch, k_size = (4,4), s = (2,2), pad = (1,1), b = True, activation = True):
         super(deconv_layer, self).__init__()
