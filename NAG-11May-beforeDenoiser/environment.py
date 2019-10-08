@@ -103,15 +103,13 @@ class IBMEnv(Env):
     
     def set_data_path(self, path):
       self.data_path = Path(self.root_folder + '/datasets/' + path)
-            
-    
+              
         
 class ColabEnv(Env):
     def __init__(self):
       self.root_folder = '/content'
       self.temp_csv_path = self.root_folder
       self.python_files_path = self.root_folder + '/nag-public'
-      self.torchvision_upgraded = False
       
     def get_csv_dir(self):
       return self.root_folder + '/gdrive/My Drive/DL/textual_notes/CSVs/'
@@ -123,17 +121,19 @@ class ColabEnv(Env):
       return 'models'
         
     def setup(self, **kwargs):
-        raise NotImplementedError('setup funtion has not been tested with the new run_shell_command yet.')
-        # remove this once tochvision 0.3 is present by default in colab
-        global torchvision_upgraded
+        global torchvision_upgraded, art_installed
         try:
             torchvision_upgraded
         except NameError:
           run_shell_command('pip uninstall -y torchvision')
           run_shell_command('pip install https://download.pytorch.org/whl/cu100/torchvision-0.3.0-cp36-cp36m-linux_x86_64.whl')
           torchvision_upgraded = True
-        else:
-          print("torchvision already upgraded")
+        
+        try:
+          art_installed
+        except NameError:
+          run_shell_command('pip install adversarial-robustness-toolbox')
+          art_installed = True
           
         from google.colab import drive
         drive.mount('/content/gdrive')
