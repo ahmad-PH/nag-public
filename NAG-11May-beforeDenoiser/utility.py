@@ -1,6 +1,6 @@
 import os; import time
 from fastai.callbacks import *
-
+from fastai.basic_train import *
 
 def to_ordinal(i):
   ones = i % 10
@@ -24,16 +24,16 @@ class FileControl(LearnerCallback):
       super().__init__(learn)
       self.root_folder = root_folder
       self.gen = gen
-      
+
     def on_epoch_end(self, epoch, **kwargs):
       with open(self.root_folder + '/ctrl.txt', 'r') as control_file:
         control_data = json.loads(control_file.read())
-      
+
       if str(epoch) in control_data:
         action = control_data[str(epoch)]
         self.epoch = epoch
         return self.perform_action(action)
-        
+
     def perform_action(self, action):
       if action == 'stop':
         return {'stop_training': True}
@@ -47,11 +47,11 @@ class FileControl(LearnerCallback):
         self.gen.n_active_labels = min(self.gen.n_active_labels * 2, 1000)
         print('increased n_active_labels to {} at end of epoch {}'.format(self.gen.n_active_labels ,self.epoch))
       elif action == 'continue':
-        return 
+        return
       else:
         print('invalid action: \"{}\". please enter a valid action:'.format(action))
         return self.perform_action(input())
-    
+
     def ask_from_file(self):
       wait_file = open(self.root_folder + '/wait.txt', 'w')
       while True:
