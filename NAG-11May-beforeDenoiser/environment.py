@@ -121,37 +121,36 @@ class ColabEnv(Env):
       return 'models'
         
     def setup(self, **kwargs):
-        global torchvision_upgraded, art_installed
-        try:
-            torchvision_upgraded
-        except NameError:
-          run_shell_command('pip uninstall -y torchvision')
-          run_shell_command('pip install https://download.pytorch.org/whl/cu100/torchvision-0.3.0-cp36-cp36m-linux_x86_64.whl')
-          torchvision_upgraded = True
+      global torchvision_upgraded, art_installed
+      try:
+          torchvision_upgraded
+      except NameError:
+        run_shell_command('pip uninstall -y torchvision')
+        run_shell_command('pip install https://download.pytorch.org/whl/cu100/torchvision-0.3.0-cp36-cp36m-linux_x86_64.whl')
+        torchvision_upgraded = True
+
+      try:
+        art_installed
+      except NameError:
+        run_shell_command('pip install adversarial-robustness-toolbox')
+        art_installed = True
         
-        try:
-          art_installed
-        except NameError:
-          run_shell_command('pip install adversarial-robustness-toolbox')
-          art_installed = True
-          
-        from google.colab import drive
-        drive.mount('/content/gdrive')
+      from google.colab import drive
+      drive.mount('/content/gdrive')
         
     def load_dataset(self, compressed_name, unpacked_name):
-      raise NotImplementedError('load_dataset for colab has direct shell commands, which have not been tested yet.')
       if compressed_name not in os.listdir('.'):
         print(compressed_name + ' not found, getting it from drive')
         shutil.copyfile("/content/gdrive/My Drive/DL/{}.tar.gz".format(compressed_name), "./{}.tar.gz".format(compressed_name))
 
         gunzip_arg = "./{}.tar.gz".format(compressed_name)
-        subprocess.call('gunzip -f ' + gunzip_arg) # NOT TESTED. original:  !gunzip -f $gunzip_arg
+        subprocess.call('gunzip -f ' + gunzip_arg, shell=True)
 
         tar_arg = "./{}.tar".format(compressed_name)
-        subprocess.call('tar -xvf ' + tar_arg + ' > /dev/null') # NOTE TESTED. original: !tar -xvf $tar_arg > /dev/null
+        subprocess.call('tar -xvf ' + tar_arg + ' > /dev/null', shell=True) 
 
         os.rename(unpacked_name, compressed_name)
-        subprocess.call('rm ' + tar_arg) # NOT TESTED. original: !rm $tar_arg
+        subprocess.call('rm ' + tar_arg, shell=True) 
         
         print("done") 
       else:
