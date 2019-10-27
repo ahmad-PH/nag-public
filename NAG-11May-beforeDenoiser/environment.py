@@ -11,7 +11,12 @@ import torch
 
 
 def detect_env():
-    return 'colab' if 'content' in os.listdir('/') else 'IBM'
+    if 'content' in os.listdir('/'):
+      return 'colab'
+    elif 'mlcm-deep' in os.listdir('/home'):
+      return 'mlcm'
+    else:
+      return 'IBM'
   
 def run_shell_command(cmd):
   p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
