@@ -21,7 +21,7 @@ def perturb_dataset(env: Env, trainOrValid: str, model: torch.nn.Module, dest_fo
     raise ValueError('invalid value for trainOrValid')
 
   for i in range(1000):
-    os.makedirs("{}/{}".format(dest_folder, i))
+    os.makedirs("{}/{}".format(dest_folder, data.classes[i]))
 
   model = model.eval()
   next_filename_per_label = [0] * 1000
@@ -36,9 +36,8 @@ def perturb_dataset(env: Env, trainOrValid: str, model: torch.nn.Module, dest_fo
         image = Image(image_data)
         target_label = target_labels[i].item()
         print(target_labels[i].item())
-        image.save("{}/{}/{}.jpg".format(dest_folder, target_label, next_filename_per_label[target_label]))
+        image.save("{}/{}/{}.jpg".format(dest_folder, data.classes[target_label], next_filename_per_label[target_label]))
         next_filename_per_label[target_label] += 1
-        
 # code to test a single image:
 
 # import PIL
