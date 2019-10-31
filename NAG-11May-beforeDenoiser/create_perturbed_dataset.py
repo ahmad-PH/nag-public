@@ -1,6 +1,7 @@
 from nag_util import print_range
 import nag_util
 import os
+import torch
 
 def perturb_dataset(trainOrValid: str, model: torch.nn.Module, dest_folder: str):
 
