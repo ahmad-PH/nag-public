@@ -16,7 +16,7 @@ def perturb_dataset(trainOrValid: str, model: nn.Module, dest_folder: str):
     dataloader = data.train_dl
   elif trainOrValid == 'valid':
     dataloader = data.valid_dl
-  else
+  else:
     raise ValueError('invalid value for trainOrValid')
 
   for i in range(1000):
