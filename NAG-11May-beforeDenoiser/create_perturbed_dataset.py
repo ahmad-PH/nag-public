@@ -2,7 +2,23 @@ from nag_util import print_range
 import nag_util
 import os
 
-def perturb_dataset(dataloader: DataLoader, model: nn.Module, dest_folder: str):
+
+def perturb_dataset(trainOrValid: str, model: nn.Module, dest_folder: str):
+
+  data = (ImageList.from_folder(env.data_path)
+          .split_by_folder(valid='valid')
+          .label_from_folder()
+          .transform(None, size=224, resize_method=ResizeMethod.SQUISH)
+          .databunch(bs=32, num_workers=1)
+          .normalize(imagenet_stats))
+
+  if trainOrValid == 'train':
+    dataloader = data.train_dl
+  elif trainOrValid == 'valid':
+    dataloader = data.valid_dl
+  else
+    raise ValueError('invalid value for trainOrValid')
+
   for i in range(1000):
     os.makedirs("{}/{}".format(dest_folder, i))
 
