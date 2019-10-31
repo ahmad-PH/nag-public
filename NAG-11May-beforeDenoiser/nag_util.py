@@ -250,8 +250,7 @@ class AttnBasedGen(nn.Module):
 
 
 
-   
-def rename_imagenet_folders(root_folder):
+def rename_imagenet_folders_old(root_folder):
     name_map = {}
     with open('/content/imagenet_labels.txt', 'r') as f:
         for line in f:
@@ -261,6 +260,20 @@ def rename_imagenet_folders(root_folder):
     for idx, name in name_map.items():
       if Path('{}/{}'.format(root_folder, idx)).exists():
         os.rename('{}/{}'.format(root_folder, idx), '{}/{}'.format(root_folder, name))
+
+
+
+def rename_imagenet_folders(root_folder):
+    name_map = {}
+    with open('./imagenet_clsidx_to_id', 'r') as f:
+        for line in f:
+            cls_idx, name_id = line.strip().split(' ')
+            name_map[int(cls_id)] = name_id
+
+    for idx, name in name_map.items():
+      if Path('{}/{}'.format(root_folder, idx)).exists():
+        os.rename('{}/{}'.format(root_folder, idx), '{}/{}'.format(root_folder, name))
+
 
 
 def zip_test_dataset(root_folder):
