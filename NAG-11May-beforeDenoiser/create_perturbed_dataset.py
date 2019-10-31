@@ -1,10 +1,11 @@
 from nag_util import print_range
+from environment import Env
 import nag_util
 import os
 import torch
+from fastai.vision import *
 
-def perturb_dataset(trainOrValid: str, model: torch.nn.Module, dest_folder: str):
-
+def perturb_dataset(env: Env, trainOrValid: str, model: torch.nn.Module, dest_folder: str):
   data = (ImageList.from_folder(env.data_path)
           .split_by_folder(valid='valid')
           .label_from_folder()
@@ -59,4 +60,4 @@ def perturb_dataset(trainOrValid: str, model: torch.nn.Module, dest_folder: str)
 
 
 # example of calling it:
-# perturb_dataset(transform_data.train_dl, gen_learn.model, '/home/mlcm-deep/AhmadPourihosseini/NAG/transformed')
+# perturb_dataset(env, 'valid', gen_learn.model, '/home/mlcm-deep/AhmadPourihosseini/NAG/transformed')
