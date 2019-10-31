@@ -2,8 +2,7 @@ from nag_util import print_range
 import nag_util
 import os
 
-
-def perturb_dataset(trainOrValid: str, model: nn.Module, dest_folder: str):
+def perturb_dataset(trainOrValid: str, model: torch.nn.Module, dest_folder: str):
 
   data = (ImageList.from_folder(env.data_path)
           .split_by_folder(valid='valid')
