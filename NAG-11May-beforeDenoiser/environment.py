@@ -10,12 +10,13 @@ from fastai.callbacks import *
 from fastai.utils.mem import *
 import torch
 
-
 def detect_env():
     if 'content' in os.listdir('/'):
       return 'colab'
     elif 'mlcm-deep' in os.listdir('/home'):
       return 'mlcm'
+    elif 'mohammad' in os.listdir('/home'):
+      return 'amsterdam'
     else:
       return 'IBM'
   
@@ -29,7 +30,7 @@ def create_env():
     return IBMEnv()
   elif detect_env() == "colab":
     return ColabEnv()
-  elif detect_env() == "mlcm":
+  elif detect_env() == "mlcm" or "amsterdam":
     return MLCMEnv()
 
 class Env:
