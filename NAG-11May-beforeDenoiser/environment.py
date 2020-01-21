@@ -30,8 +30,10 @@ def create_env():
     return IBMEnv()
   elif detect_env() == "colab":
     return ColabEnv()
-  elif detect_env() == "mlcm" or "amsterdam":
+  elif detect_env() == "mlcm":
     return MLCMEnv()
+  elif detect_env() == "amsterdam":
+    return AmsterdamEnv()
 
 class Env:
   def get_csv_path(self):
