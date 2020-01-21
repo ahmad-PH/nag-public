@@ -107,6 +107,11 @@ class LocalEnv(Env):
 class MLCMEnv(LocalEnv):
   def __init__(self):
     super().__init__("/home/mlcm-deep/AhmadPourihosseini/NAG")
+    
+class AmsterdamEnv(LocalEnv):
+  def __init__(self):
+    super().__init__("/home/mohammad/Projects/nag")
+
 
 class IBMEnv(LocalEnv):
     def __init__(self):
