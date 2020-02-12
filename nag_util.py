@@ -7,6 +7,8 @@ import torch.nn.functional as F
 import torchvision
 import os
 import subprocess
+import pandas as pd
+import numpy as np
 
 class deconv_layer(nn.Module):
     def __init__(self, in_ch, out_ch, k_size = (4,4), s = (2,2), pad = (1,1), b = True, activation = True):
@@ -500,3 +502,50 @@ class DiversityMetricOld(Callback):
     self.pred_hist = (self.pred_hist.float() / len(self.perturbations)).tolist()
     div_metric = classes_needed_to_reach(self.percentage, self.pred_hist)[0]
     return add_metrics(last_metrics, div_metric)
+
+
+def produce_summary(root_folder, n_files):
+  def writeline(file, values, fmt_string):
+    file.write(', '.join(fmt_string.format(v) for v in values) + '\n')
+  
+  last_rows = []
+  for i in range(n_files):
+    prefix = '/root/Derakhshani/adversarial/textual_notes/CSVs'
+    df = pd.read_csv("{}/{}/{}.csv".format(prefix, root_folder, i))
+    last_rows.append(df.iloc[-1][1:-1].values.tolist())
+  
+  last_rows = np.array(last_rows)
+  
+  labels = list(df.columns[1:-1])
+  means = np.mean(last_rows, axis=0).tolist()
+  outfile = open('{}/{}/summary.txt'.format(prefix, root_folder), 'w+')
+  outfile.write('means: \n')
+  writeline(outfile, labels, '{: >20}')
+  writeline(outfile, means, '{: >20.3}')
+  outfile.write('\n')
+      
+  operations = []
+  for column in df.columns[1:-1]:
+    if column in ['train_loss', 'valid_loss', 'fool_loss', 'triplet_loss'] or column[:8] == 'div_loss':
+      operations.append('min')
+    elif column in ['validation', 'targeted_validation', 'div_metric', 'entropy']:
+      operations.append('max')
+    else:
+      raise ValueError('column {} is not recognized'.format(column))
+    
+  results = []
+  indexes = []
+  
+  for i in range(len(operations)):
+    values = last_rows[:, i]
+    if operations[i] == 'max': operation = np.max
+    elif operations[i] == 'min': operation = np.min
+    result = operation(values)
+    results.append(result)
+    indexes.append(values.tolist().index(result))
+  
+  outfile.write('bests: \n')
+  writeline(outfile, labels, '{: >20}')
+  writeline(outfile, operations, '{: >20}')
+  writeline(outfile, results, '{: >20.3}')
+  writeline(outfile, indexes, '{: >20}')
