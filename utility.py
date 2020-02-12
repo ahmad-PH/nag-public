@@ -69,3 +69,10 @@ class FileControl(LearnerCallback):
           wait_file.write('invalid action \"{}\"\n'.format(action))
           wait_file.flush()
           time.sleep(10)
+
+def derange(*args):
+  if len(args) == 0: raise ValueError('shuffle function needs atleast one argument')
+  deranged_indexes = derangement(args[0].shape[0])
+  if not all([args[0].shape[0] == arg.shape[0] for arg in args]): 
+    raise ValueError('inputs to shuffle must all have the same 0th dimension')
+  return [arg[deranged_indexes] for arg in args]
