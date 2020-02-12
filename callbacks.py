@@ -57,3 +57,28 @@ class CyclicalLRScheduler(LearnerCallback):
 
 #       print('iter: {}, lr: {}'.format(iteration, new_lr))
       self.opt.lr = new_lr
+
+
+
+class LRAnneal(LearnerCallback):
+  _order = -20 # Needs to run before the recorder
+  
+  def __init__(self, learn, final_value):
+    super().__init__(learn)
+    self.final_value = final_value
+  
+  def on_train_begin(self, **kwargs):
+    self.initial_value = self.opt.lr
+    self.learn.recorder.add_metric_names(['lr'])
+  
+  def on_epoch_end(self, epoch, n_epochs, last_metrics, **kwargs):
+    self.opt.lr = annealing_linear(self.initial_value, self.final_value, float(epoch) / n_epochs)
+    return add_metrics(last_metrics, self.opt.lr)
+  
+# class LRMonitor(LearnerCallBack):
+#   def __init__(self, learn):
+#     super().__init__(learn)
+#     self.name = 'lr'
+    
+#   def on_epoch_end(self, last_metrics, **kwargs):
+#     return add_metrics(last_metrics, self.opt.lr)
